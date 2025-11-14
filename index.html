@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="add-form">
+  <form action="{{ url_for('add_task') }}" method="post">
+    <input name="title" placeholder="New task title" required>
+    <input name="due_date" type="date" title="Due date (optional)">
+    <select name="priority" title="Priority">
+      <option value="1">High</option>
+      <option value="2" selected>Medium</option>
+      <option value="3">Low</option>
+    </select>
+    <button type="submit">Add</button>
+  </form>
+</section>
+
+<section class="filters">
+  <a href="{{ url_for('index', show='all') }}" class="{{ 'active' if show=='all' else '' }}">All</a> |
+  <a href="{{ url_for('index', show='active') }}" class="{{ 'active' if show=='active' else '' }}">Active</a> |
+  <a href="{{ url_for('index', show='completed') }}" class="{{ 'active' if show=='completed' else '' }}">Completed</a>
+  <span class="spacer"></span>
+  Sort:
+  <a href="{{ url_for('index', sort='created') }}" class="{{ 'active' if sort=='created' else '' }}">Recent</a>
+  <a href="{{ url_for('index', sort='due') }}" class="{{ 'active' if sort=='due' else '' }}">Due</a>
+  <a href="{{ url_for('index', sort='priority') }}" class="{{ 'active' if sort=='priority' else '' }}">Priority</a>
+</section>
+
+<section class="tasks">
+  {% if tasks %}
+    <ul class="task-list">
+      {% for t in tasks %}
+        <li class="task {% if t['completed'] %}done{% endif %}">
+          <form action="{{ url_for('toggle_task', task_id=t['id']) }}" method="post" class="inline">
+            <button type="submit" class="chk">{{ '✓' if t['completed'] else '○' }}</button>
+          </form>
+          <div class="task-body">
+            <strong>{{ t['title'] }}</strong>
+            {% if t['due_date'] %}<span class="meta"> • due {{ t['due_date'] }}</span>{% endif %}
+            <div class="sm">{{ t['description'] }}</div>
+          </div>
+          <div class="actions">
+            <a href="{{ url_for('edit_task', task_id=t['id']) }}">Edit</a>
+            <form action="{{ url_for('delete_task', task_id=t['id']) }}" method="post" class="inline" onsubmit="return confirm('Delete this task?');">
+              <button type="submit" class="del">Delete</button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No tasks yet — add your first task above.</p>
+  {% endif %}
+</section>
+{% endblock %}
