@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Task</h2>
+<form action="{{ url_for('edit_task', task_id=task['id']) }}" method="post" class="edit-form">
+  <label>Title<input name="title" value="{{ task['title'] }}" required></label>
+  <label>Description<textarea name="description">{{ task['description'] }}</textarea></label>
+  <label>Due date<input type="date" name="due_date" value="{{ task['due_date'] }}"></label>
+  <label>Priority
+    <select name="priority">
+      <option value="1" {% if task['priority']==1 %}selected{% endif %}>High</option>
+      <option value="2" {% if task['priority']==2 %}selected{% endif %}>Medium</option>
+      <option value="3" {% if task['priority']==3 %}selected{% endif %}>Low</option>
+    </select>
+  </label>
+  <button type="submit">Save</button>
+  <a href="{{ url_for('index') }}" class="btn link">Cancel</a>
+</form>
+{% endblock %}
